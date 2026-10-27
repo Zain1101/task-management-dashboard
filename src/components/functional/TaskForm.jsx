@@ -1,9 +1,18 @@
-import { useState } from "react";
+
+import { useState, useRef, useEffect } from "react";
 import CardWrapper from "./CardWrapper";
 
 function TaskForm({ onAddTask }) {
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState("Medium");
+
+  // Create a reference to the input field
+  const inputRef = useRef(null);
+
+  // Automatically focus input when component mounts
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -16,6 +25,9 @@ function TaskForm({ onAddTask }) {
 
     setTitle("");
     setPriority("Medium");
+
+    // Focus input again after submitting
+    inputRef.current?.focus();
   }
 
   return (
@@ -27,6 +39,7 @@ function TaskForm({ onAddTask }) {
           <label htmlFor="taskTitle">Task Title</label>
 
           <input
+            ref={inputRef}
             id="taskTitle"
             type="text"
             placeholder="Enter task title..."

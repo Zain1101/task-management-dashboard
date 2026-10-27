@@ -246,3 +246,118 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
   z-index: 1000;
 }
+
+/* Header Layout */
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  padding: 11px 18px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.theme-toggle:hover {
+  background: #e2e8f0;
+}
+
+/* Dark Mode Background */
+.dashboard.dark {
+  background: #0f172a;
+}
+
+/* Dark Mode Containers */
+.dashboard.dark .dashboard-header,
+.dashboard.dark .card-wrapper {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+/* Dark Mode Text */
+.dashboard.dark .dashboard-header h1,
+.dashboard.dark .dashboard-grid h2,
+.dashboard.dark .metric-card h2,
+.dashboard.dark .task-title-row h3,
+.dashboard.dark .form-group label,
+.dashboard.dark .activity-item p {
+  color: #f1f5f9;
+}
+
+/* Secondary Text */
+.dashboard.dark .dashboard-header p,
+.dashboard.dark .metric-card p,
+.dashboard.dark .task-status,
+.dashboard.dark .dashboard-grid p,
+.dashboard.dark .empty-message {
+  color: #94a3b8;
+}
+
+/* Dark Mode Form Fields */
+.dashboard.dark .form-group input,
+.dashboard.dark .form-group select,
+.dashboard.dark .task-filters select {
+  background: #0f172a;
+  color: #f1f5f9;
+  border-color: #475569;
+}
+
+.dashboard.dark .form-group input::placeholder {
+  color: #94a3b8;
+}
+
+/* Dark Mode Task Cards */
+.dashboard.dark .task-card {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+.dashboard.dark .task-completed {
+  background: #172033;
+}
+
+.dashboard.dark .task-completed h3 {
+  color: #94a3b8;
+}
+
+/* Dark Mode Activity Log */
+.dashboard.dark .activity-item {
+  background: #0f172a;
+}
+
+.dashboard.dark .activity-item span {
+  color: #94a3b8;
+}
+
+/* Dark Mode Toggle */
+.dashboard.dark .theme-toggle {
+  background: #334155;
+  color: #f1f5f9;
+  border-color: #475569;
+}
+
+.dashboard.dark .theme-toggle:hover {
+  background: #475569;
+}
+
+/* Mobile Header */
+@media (max-width: 600px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .theme-toggle {
+    width: 100%;
+  }
+}

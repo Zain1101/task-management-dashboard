@@ -1,3 +1,6 @@
+
+import ThemeToggle from "./ThemeToggle";
+
 function Header({ title, subtitle }) {
   return (
     <header className="dashboard-header">
@@ -5,6 +8,8 @@ function Header({ title, subtitle }) {
         <h1>{title}</h1>
         <p>{subtitle}</p>
       </div>
+
+      <ThemeToggle />
     </header>
   );
 }

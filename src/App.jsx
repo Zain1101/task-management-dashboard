@@ -1,5 +1,10 @@
 
-import { useState } from "react";
+import {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 
 import Header from "./components/functional/Header";
 import MetricsSummary from "./components/functional/MetricsSummary";
@@ -7,126 +12,165 @@ import TaskForm from "./components/functional/TaskForm";
 import TaskList from "./components/functional/TaskList";
 import ActivityLogger from "./components/class/ActivityLogger";
 
+import { useTheme } from "./context/ThemeContext";
+
 import "./App.css";
 
 function App() {
-  const [tasks, setTasks] = useState([]);
+  const { theme } = useTheme();
+
+  // Load saved tasks when application starts
+  const [tasks, setTasks] = useState(() => {
+    try {
+      const savedTasks = JSON.parse(
+        localStorage.getItem("dashboardTasks") || "[]"
+      );
+
+      return Array.isArray(savedTasks) ? savedTasks : [];
+    } catch (error) {
+      console.error("Failed to load tasks:", error);
+      return [];
+    }
+  });
 
   const [statusFilter, setStatusFilter] = useState("All");
   const [priorityFilter, setPriorityFilter] = useState("All");
-
   const [activity, setActivity] = useState(null);
 
-  // Record an activity
-  function recordActivity(message) {
-    const newActivity = {
-      id: crypto.randomUUID(),
-      message: message,
-      time: new Date().toLocaleString(),
-    };
-
-    setActivity(newActivity);
-  }
-
-  // Add a new task
-  function handleAddTask(title, priority) {
-    const newTask = {
-      id: crypto.randomUUID(),
-      title: title,
-      priority: priority,
-      completed: false,
-    };
-
-    setTasks((previousTasks) => [
-      newTask,
-      ...previousTasks,
-    ]);
-
-    recordActivity(`Added task: ${title}`);
-  }
-
-  // Mark task as completed or pending
-  function handleToggleTask(id) {
-    const selectedTask = tasks.find(
-      (task) => task.id === id
-    );
-
-    if (!selectedTask) return;
-
-    setTasks((previousTasks) =>
-      previousTasks.map((task) =>
-        task.id === id
-          ? { ...task, completed: !task.completed }
-          : task
-      )
-    );
-
-    if (selectedTask.completed) {
-      recordActivity(
-        `Reopened task: ${selectedTask.title}`
+  // useEffect: Save tasks to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        "dashboardTasks",
+        JSON.stringify(tasks)
       );
-    } else {
-      recordActivity(
-        `Completed task: ${selectedTask.title}`
-      );
+    } catch (error) {
+      console.error("Failed to save tasks:", error);
     }
-  }
+  }, [tasks]);
 
-  // Delete task
-  function handleDeleteTask(id) {
-    const selectedTask = tasks.find(
-      (task) => task.id === id
-    );
+  // useEffect: Update browser tab title
+  useEffect(() => {
+    const pendingCount = tasks.filter(
+      (task) => !task.completed
+    ).length;
 
-    if (!selectedTask) return;
+    document.title = `${pendingCount} Pending | Task Dashboard`;
+  }, [tasks]);
 
-    setTasks((previousTasks) =>
-      previousTasks.filter((task) => task.id !== id)
-    );
+  // useCallback: Record new activity
+  const recordActivity = useCallback((message) => {
+    setActivity({
+      id: crypto.randomUUID(),
+      message,
+      time: new Date().toLocaleString(),
+    });
+  }, []);
 
-    recordActivity(
-      `Deleted task: ${selectedTask.title}`
-    );
-  }
+  // useCallback: Add a task
+  const handleAddTask = useCallback(
+    (title, priority) => {
+      const newTask = {
+        id: crypto.randomUUID(),
+        title,
+        priority,
+        completed: false,
+      };
 
-  // Change status filter
-  function handleStatusFilterChange(value) {
-    if (value === statusFilter) return;
+      setTasks((previousTasks) => [
+        newTask,
+        ...previousTasks,
+      ]);
 
-    setStatusFilter(value);
+      recordActivity(`Added task: ${title}`);
+    },
+    [recordActivity]
+  );
 
-    recordActivity(
-      `Status filter changed to: ${value}`
-    );
-  }
+  // useCallback: Toggle completed/pending status
+  const handleToggleTask = useCallback(
+    (id) => {
+      const selectedTask = tasks.find(
+        (task) => task.id === id
+      );
 
-  // Change priority filter
-  function handlePriorityFilterChange(value) {
-    if (value === priorityFilter) return;
+      if (!selectedTask) return;
 
-    setPriorityFilter(value);
+      setTasks((previousTasks) =>
+        previousTasks.map((task) =>
+          task.id === id
+            ? { ...task, completed: !task.completed }
+            : task
+        )
+      );
 
-    recordActivity(
-      `Priority filter changed to: ${value}`
-    );
-  }
+      recordActivity(
+        `${selectedTask.completed ? "Reopened" : "Completed"} task: ${
+          selectedTask.title
+        }`
+      );
+    },
+    [tasks, recordActivity]
+  );
 
-  // Filter tasks
-  const filteredTasks = tasks.filter((task) => {
-    const matchesStatus =
-      statusFilter === "All" ||
-      (statusFilter === "Completed" && task.completed) ||
-      (statusFilter === "Pending" && !task.completed);
+  // useCallback: Delete a task
+  const handleDeleteTask = useCallback(
+    (id) => {
+      const selectedTask = tasks.find(
+        (task) => task.id === id
+      );
 
-    const matchesPriority =
-      priorityFilter === "All" ||
-      task.priority === priorityFilter;
+      if (!selectedTask) return;
 
-    return matchesStatus && matchesPriority;
-  });
+      setTasks((previousTasks) =>
+        previousTasks.filter((task) => task.id !== id)
+      );
+
+      recordActivity(`Deleted task: ${selectedTask.title}`);
+    },
+    [tasks, recordActivity]
+  );
+
+  // useCallback: Change status filter
+  const handleStatusFilterChange = useCallback(
+    (value) => {
+      if (value === statusFilter) return;
+
+      setStatusFilter(value);
+      recordActivity(`Status filter changed to: ${value}`);
+    },
+    [statusFilter, recordActivity]
+  );
+
+  // useCallback: Change priority filter
+  const handlePriorityFilterChange = useCallback(
+    (value) => {
+      if (value === priorityFilter) return;
+
+      setPriorityFilter(value);
+      recordActivity(`Priority filter changed to: ${value}`);
+    },
+    [priorityFilter, recordActivity]
+  );
+
+  // useMemo: Optimize task filtering
+  const filteredTasks = useMemo(() => {
+    return tasks.filter((task) => {
+      const matchesStatus =
+        statusFilter === "All" ||
+        (statusFilter === "Completed" && task.completed) ||
+        (statusFilter === "Pending" && !task.completed);
+
+      const matchesPriority =
+        priorityFilter === "All" ||
+        task.priority === priorityFilter;
+
+      return matchesStatus && matchesPriority;
+    });
+  }, [tasks, statusFilter, priorityFilter]);
 
   return (
-    <div className="dashboard">
+    <div className={`dashboard ${theme}`}>
       <Header
         title="Task Management Dashboard"
         subtitle="Organize your tasks and track your progress."
