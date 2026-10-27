@@ -1,16 +1,41 @@
-# React + Vite
+# Task Management Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive task management application built with **React.js and Vite**. It allows users to organize tasks, track progress, and monitor activities through an intuitive dashboard.
 
-Currently, two official plugins are available:
+### Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Create, complete, and delete tasks.
+- Filter tasks by status and priority.
+- View real-time task statistics.
+- Track user activities with an activity logger.
+- Switch between light and dark themes.
+- Persist tasks and activity logs using localStorage.
+- Responsive interface for desktop and mobile devices.
 
-## React Compiler
+### Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend:** React.js, JavaScript (ES6+), CSS3
+- **Build Tool:** Vite
+- **State Management:** React Hooks and Context API
+- **Storage:** Browser localStorage
+- **Deployment:** Vercel
 
-## Expanding the ESLint configuration
+### React Concepts Implemented
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Functional and class components, props, component lifecycle methods, conditional rendering, event handling, and React Hooks (`useState`, `useEffect`, `useContext`, `useRef`, `useMemo`, and `useCallback`).
+
+### Getting Started
+
+Clone the repository and run the following commands:
+
+1. `npm install` — Install dependencies.
+2. `npm run dev` — Start the development server.
+3. Open the local URL displayed in the terminal.
+
+### Live Demo
+
+[View Task Management Dashboard](https://task-management-dashboard-rho-sage.vercel.app/)
+
+### Project Information
+
+Developed as part of the **Web Engineering / Frontend Development** course assignment, demonstrating React component architecture and state management.
