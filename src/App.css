@@ -198,3 +198,51 @@
     align-self: flex-end;
   }
 }
+
+
+/* Activity Logger */
+.activity-panel {
+  align-self: start;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.activity-item {
+  padding: 13px;
+  border-left: 3px solid #6366f1;
+  background: #f8fafc;
+  border-radius: 6px;
+}
+
+.activity-item p {
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: #334155;
+  overflow-wrap: anywhere;
+}
+
+.activity-item span {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+/* Activity Notification */
+.activity-toast {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  max-width: min(350px, calc(100vw - 50px));
+  padding: 15px 20px;
+  border-radius: 10px;
+  background: #334155;
+  color: white;
+  font-size: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}

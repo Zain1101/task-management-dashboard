@@ -1,10 +1,11 @@
+
 import { useState } from "react";
 
 import Header from "./components/functional/Header";
 import MetricsSummary from "./components/functional/MetricsSummary";
-import CardWrapper from "./components/functional/CardWrapper";
 import TaskForm from "./components/functional/TaskForm";
 import TaskList from "./components/functional/TaskList";
+import ActivityLogger from "./components/class/ActivityLogger";
 
 import "./App.css";
 
@@ -13,6 +14,19 @@ function App() {
 
   const [statusFilter, setStatusFilter] = useState("All");
   const [priorityFilter, setPriorityFilter] = useState("All");
+
+  const [activity, setActivity] = useState(null);
+
+  // Record an activity
+  function recordActivity(message) {
+    const newActivity = {
+      id: crypto.randomUUID(),
+      message: message,
+      time: new Date().toLocaleString(),
+    };
+
+    setActivity(newActivity);
+  }
 
   // Add a new task
   function handleAddTask(title, priority) {
@@ -27,10 +41,18 @@ function App() {
       newTask,
       ...previousTasks,
     ]);
+
+    recordActivity(`Added task: ${title}`);
   }
 
-  // Toggle task completed/pending status
+  // Mark task as completed or pending
   function handleToggleTask(id) {
+    const selectedTask = tasks.find(
+      (task) => task.id === id
+    );
+
+    if (!selectedTask) return;
+
     setTasks((previousTasks) =>
       previousTasks.map((task) =>
         task.id === id
@@ -38,16 +60,58 @@ function App() {
           : task
       )
     );
+
+    if (selectedTask.completed) {
+      recordActivity(
+        `Reopened task: ${selectedTask.title}`
+      );
+    } else {
+      recordActivity(
+        `Completed task: ${selectedTask.title}`
+      );
+    }
   }
 
-  // Delete a task
+  // Delete task
   function handleDeleteTask(id) {
+    const selectedTask = tasks.find(
+      (task) => task.id === id
+    );
+
+    if (!selectedTask) return;
+
     setTasks((previousTasks) =>
       previousTasks.filter((task) => task.id !== id)
     );
+
+    recordActivity(
+      `Deleted task: ${selectedTask.title}`
+    );
   }
 
-  // Filter tasks by status and priority
+  // Change status filter
+  function handleStatusFilterChange(value) {
+    if (value === statusFilter) return;
+
+    setStatusFilter(value);
+
+    recordActivity(
+      `Status filter changed to: ${value}`
+    );
+  }
+
+  // Change priority filter
+  function handlePriorityFilterChange(value) {
+    if (value === priorityFilter) return;
+
+    setPriorityFilter(value);
+
+    recordActivity(
+      `Priority filter changed to: ${value}`
+    );
+  }
+
+  // Filter tasks
   const filteredTasks = tasks.filter((task) => {
     const matchesStatus =
       statusFilter === "All" ||
@@ -80,18 +144,13 @@ function App() {
               onToggleTask={handleToggleTask}
               onDeleteTask={handleDeleteTask}
               statusFilter={statusFilter}
-              onStatusFilterChange={setStatusFilter}
+              onStatusFilterChange={handleStatusFilterChange}
               priorityFilter={priorityFilter}
-              onPriorityFilterChange={setPriorityFilter}
+              onPriorityFilterChange={handlePriorityFilterChange}
             />
           </div>
 
-          <CardWrapper className="activity-panel">
-            <h2>Activity Log</h2>
-            <p>
-              Recent activities will appear here.
-            </p>
-          </CardWrapper>
+          <ActivityLogger activity={activity} />
         </div>
       </main>
     </div>
